@@ -1,0 +1,1 @@
+recursive-include inventree_partsgraph/static *.js *.css
