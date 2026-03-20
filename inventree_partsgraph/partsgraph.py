@@ -54,6 +54,19 @@ class PartsGraphPlugin(SettingsMixin, UrlsMixin, UserInterfaceMixin, InvenTreePl
             }
         ]
 
+    def get_ui_dashboard_items(self, request, context, **kwargs):
+        return [
+            {
+                "key": "partsgraph-dashboard",
+                "title": "Part Risk Graph",
+                "description": "Interactive BOM risk graph for identifying part reuse and supply-chain risk",
+                "source": self.plugin_static_file(
+                    "PartRiskGraph.js:renderPartRiskGraph"
+                ),
+                "options": {"width": 12, "height": 6},
+            }
+        ]
+
     def setup_urls(self):
         from django.urls import path
 
