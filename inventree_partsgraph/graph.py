@@ -4,7 +4,8 @@ import hashlib
 import json
 import logging
 
-import numpy as np
+import math
+
 from django.core.cache import cache
 from django.db.models import Count, Q, Sum
 
@@ -200,9 +201,16 @@ def _compute_graph(params: dict) -> dict:
     metric_values = [n[metric_field] for n in nodes if n[metric_field] > 0]
     risk_threshold = 0
     if metric_values:
-        risk_threshold = float(
-            np.percentile(metric_values, params["risk_percentile"])
-        )
+        sorted_vals = sorted(metric_values)
+        k = (params["risk_percentile"] / 100) * (len(sorted_vals) - 1)
+        f = math.floor(k)
+        c = math.ceil(k)
+        if f == c:
+            risk_threshold = float(sorted_vals[int(k)])
+        else:
+            risk_threshold = float(
+                sorted_vals[f] + (k - f) * (sorted_vals[c] - sorted_vals[f])
+            )
 
     summary = {
         "node_count": len(nodes),
